@@ -1,3 +1,10 @@
+### how to run for LIGO computers
+- the env.render() command that runs in an X-window doesn't work on headless terminals, so the better workflow is to run the training on a fast machine with a good GPU. 
+- The 'run_rlzoo.py' code saves the trained network in model/
+- the alg.learn() command run with mode='test' then loads that model to test. This part you should run locally and let your laptop render the animation as usual.
+- would be nice to save the testing time series so that we can make spectra, etc.
+
+
 # Reinforcement Learning Zoo
 [![Documentation Status](https://readthedocs.org/projects/rlzoo/badge/?version=latest)](https://rlzoo.readthedocs.io/en/latest/?badge=latest)
 [![Supported TF Version](https://img.shields.io/badge/TensorFlow-2.0.0%2B-brightgreen.svg)](https://github.com/tensorflow/tensorflow/releases)
