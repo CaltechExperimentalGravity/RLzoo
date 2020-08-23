@@ -1,60 +1,120 @@
 from rlzoo.common.env_wrappers import *
 from rlzoo.common.utils import *
 from rlzoo.algorithms import *
+from gym import wrappers
+from time import time # just to have timestamps in the files
 
-# EnvName = 'PongNoFrameskip-v4'
-# EnvType = 'atari'
+#import optuna
+#import neptune
+#from neptunecontrib.monitoring.keras import NeptuneMonitor
 
-# EnvName = 'CartPole-v0'
-EnvName = 'Pendulum-v0'
-EnvType = 'classic_control'
+import argparse
+#import json
 
-# EnvName = 'BipedalWalker-v2'
-# EnvType = 'box2d'
+#from sklearn.model_selection import train_test_split
+#from sklearn.preprocessing import MinMaxScaler, StandardScaler
+#from keras.utils.vis_utils import plot_model, model_to_dot
 
-# EnvName = 'Ant-v2'
-# EnvType = 'mujoco'
+# for getting data
+#import sys, os
 
-# EnvName = 'FetchPush-v1'
-# EnvType = 'robotics'
+# thsi is how to best time a piece of code
+from timeit import default_timer as timer
 
-# EnvName = 'FishSwim-v0'
-# EnvType = 'dm_control'
 
-# EnvName = 'ReachTarget'
-# EnvType = 'rlbench'
-# env = build_env(EnvName, EnvType, state_type='vision')
+def dozoo(args):
 
-AlgName = 'SAC'
-env = build_env(EnvName, EnvType)
-alg_params, learn_params = call_default_params(env, EnvType, AlgName)
-alg = eval(AlgName+'(**alg_params)')
-alg.learn(env=env, mode='train', render=False, **learn_params)
-alg.learn(env=env, mode='test', render=True, **learn_params)
+    # EnvName = 'PongNoFrameskip-v4'
+    # EnvType = 'atari'
 
-# AlgName = 'DPPO'
-# number_workers = 2  # need to specify number of parallel workers in parallel algorithms like A3C and DPPO
-# env = build_env(EnvName, EnvType, nenv=number_workers)
-# alg_params, learn_params = call_default_params(env, EnvType, AlgName)
-# alg_params['method'] = 'clip'    # specify 'clip' or 'penalty' method for different version of PPO and DPPO
-# alg = eval(AlgName+'(**alg_params)')
-# alg.learn(env=env,  mode='train', render=False, **learn_params)
-# alg.learn(env=env,  mode='test', render=True, **learn_params)
+    # EnvName = 'CartPole-v0'
+    EnvName = 'Pendulum-v0'
+    EnvType = 'classic_control'
 
-# AlgName = 'PPO'
-# env = build_env(EnvName, EnvType)
-# alg_params, learn_params = call_default_params(env, EnvType, AlgName)
-# alg_params['method'] = 'clip'    # specify 'clip' or 'penalty' method for different version of PPO and DPPO
-# alg = eval(AlgName+'(**alg_params)')
-# alg.learn(env=env,  mode='train', render=False, **learn_params)
-# alg.learn(env=env,  mode='test', render=True, **learn_params)
+    # EnvName = 'BipedalWalker-v2'
+    # EnvType = 'box2d'
 
-# AlgName = 'A3C'
-# number_workers = 2  # need to specify number of parallel workers
-# env = build_env(EnvName, EnvType, nenv=number_workers)
-# alg_params, learn_params = call_default_params(env, EnvType, 'A3C')
-# alg = eval(AlgName+'(**alg_params)')
-# alg.learn(env=env,  mode='train', render=False, **learn_params)
-# alg.learn(env=env,  mode='test', render=True, **learn_params)
+    # EnvName = 'Ant-v2'
+    # EnvType = 'mujoco'
 
-env.close()
+    # EnvName = 'FetchPush-v1'
+    # EnvType = 'robotics'
+
+    # EnvName = 'FishSwim-v0'
+    # EnvType = 'dm_control'
+
+    # EnvName = 'ReachTarget'
+    # EnvType = 'rlbench'
+    # env = build_env(EnvName, EnvType, state_type='vision')
+
+    AlgName = 'SAC'
+    env = build_env(EnvName, EnvType)
+    #env = wrappers.Monitor(env, 'test_movie',force=True)
+    alg_params, learn_params = call_default_params(env, EnvType, AlgName)
+    alg = eval(AlgName+'(**alg_params)')
+    
+    if args.train:
+        alg.learn(env=env, mode='train', render=False, **learn_params)
+
+    if args.test:
+        # load trained model - this is so we can train on a headless machine an test locally
+        alg.learn(env=env, mode='test', render=True, **learn_params)
+
+    # AlgName = 'DPPO'
+    # number_workers = 2  # need to specify number of parallel workers in parallel algorithms like A3C and DPPO
+    # env = build_env(EnvName, EnvType, nenv=number_workers)
+    # alg_params, learn_params = call_default_params(env, EnvType, AlgName)
+    # alg_params['method'] = 'clip'    # specify 'clip' or 'penalty' method for different version of PPO and DPPO
+    # alg = eval(AlgName+'(**alg_params)')
+    # alg.learn(env=env,  mode='train', render=False, **learn_params)
+    # alg.learn(env=env,  mode='test', render=True, **learn_params)
+
+    # AlgName = 'PPO'
+    # env = build_env(EnvName, EnvType)
+    # alg_params, learn_params = call_default_params(env, EnvType, AlgName)
+    # alg_params['method'] = 'clip'    # specify 'clip' or 'penalty' method for different version of PPO and DPPO
+    # alg = eval(AlgName+'(**alg_params)')
+    # alg.learn(env=env,  mode='train', render=False, **learn_params)
+    # alg.learn(env=env,  mode='test', render=True, **learn_params)
+
+    # AlgName = 'A3C'
+    # number_workers = 2  # need to specify number of parallel workers
+    # env = build_env(EnvName, EnvType, nenv=number_workers)
+    # alg_params, learn_params = call_default_params(env, EnvType, 'A3C')
+    # alg = eval(AlgName+'(**alg_params)')
+    # alg.learn(env=env,  mode='train', render=False, **learn_params)
+    # alg.learn(env=env,  mode='test', render=True, **learn_params)
+
+    env.close()
+
+
+if __name__ == '__main__':
+
+    # parse some args here
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('--fs', type=int, default=256,
+                    help='Sampling rate of the mock data')
+
+    parser.add_argument('--opt', type=str, default='Nadam',
+                    help='Which Optimizer to use for training the network')
+
+    parser.add_argument('--test',  default=False, action='store_true',
+                    help='True = Load model and run to test the training.')
+
+    parser.add_argument('--train', default=False, action='store_true',
+                    help='True = Train the Model and Save results. False = no train.')
+
+    parser.add_argument('--comment', type=str, default=None,
+                    help='this is a comment string that gets added to the Neptune report')
+
+    args = parser.parse_args()
+    
+    # Capture signals in the main thread
+    #killer = bilinearHelper.GracefulKiller()
+
+
+    dozoo(args)
+
+
+
