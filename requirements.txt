@@ -3,6 +3,7 @@ numpy==1.16.3
 opencv-python==4.1.0.25
 pygame==1.9.6
 tensorflow==2.1.0
+pyvirtualdisplay
 tensorflow-probability==0.8.0
 tensorlayer>=2.1.0
 gym==0.12.5
