@@ -240,7 +240,7 @@ class SAC():
                 if eps % int(save_interval) == 0:
                     plot_save_log(rewards, algorithm_name=self.name, env_name=env.spec.id)
                     self.save_ckpt(env_name=env.spec.id)
-                print('Episode: {}/{}  | Episode Reward: {:.4f}  | Running Time: {:.4f}' \
+                print('Episode: {}/{}  | Episode Reward: {:0.1f}  | Running Time: {:0.1f}' \
                       .format(eps, train_episodes, episode_reward, time.time() - t0))
                 rewards.append(episode_reward)
                 if plot_func is not None:
