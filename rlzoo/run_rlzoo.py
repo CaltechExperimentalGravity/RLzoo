@@ -21,6 +21,7 @@ import argparse
 # thsi is how to best time a piece of code
 from timeit import default_timer as timer
 
+import pyvirtualdisplay
 
 def dozoo(args):
 
@@ -51,14 +52,6 @@ def dozoo(args):
     env = build_env(EnvName, EnvType)
     #env = wrappers.Monitor(env, 'test_movie',force=True)
     alg_params, learn_params = call_default_params(env, EnvType, AlgName)
-    alg = eval(AlgName+'(**alg_params)')
-    
-    if args.train:
-        alg.learn(env=env, mode='train', render=False, **learn_params)
-
-    if args.test:
-        # load trained model - this is so we can train on a headless machine an test locally
-        alg.learn(env=env, mode='test', render=True, **learn_params)
 
     # AlgName = 'DPPO'
     # number_workers = 2  # need to specify number of parallel workers in parallel algorithms like A3C and DPPO
@@ -77,13 +70,23 @@ def dozoo(args):
     # alg.learn(env=env,  mode='train', render=False, **learn_params)
     # alg.learn(env=env,  mode='test', render=True, **learn_params)
 
-    # AlgName = 'A3C'
-    # number_workers = 2  # need to specify number of parallel workers
-    # env = build_env(EnvName, EnvType, nenv=number_workers)
-    # alg_params, learn_params = call_default_params(env, EnvType, 'A3C')
+    #AlgName = 'A3C'
+    #number_workers = 4  # need to specify number of parallel workers
+    #env = build_env(EnvName, EnvType, nenv=number_workers)
+    #alg_params, learn_params = call_default_params(env, EnvType, 'A3C')
     # alg = eval(AlgName+'(**alg_params)')
     # alg.learn(env=env,  mode='train', render=False, **learn_params)
     # alg.learn(env=env,  mode='test', render=True, **learn_params)
+
+    display = pyvirtualdisplay.Display(visible=0, size=(1400, 900)).start()
+    alg = eval(AlgName + '(**alg_params)')
+    
+    if args.train:
+        alg.learn(env=env, mode='train', render=False, **learn_params)
+
+    if args.test:
+        # load trained model - this is so we can train on a headless machine an test locally
+        alg.learn(env=env, mode='test', render=True, **learn_params, plot_func=True)
 
     env.close()
 
