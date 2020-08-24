@@ -276,7 +276,7 @@ class SAC():
                     frame_idx += 1
                     if done:
                         break
-                print('Episode: {}/{}  | Episode Reward: {:.4f}  | Running Time: {:.4f}' \
+                print('Episode: {}/{}  | Episode Reward: {:.1f}  | Running Time: {:.1f}' \
                       .format(eps, test_episodes, episode_reward, time.time() - t0))
                 rewards.append(episode_reward)
             if plot_func:
