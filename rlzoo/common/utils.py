@@ -30,7 +30,7 @@ def plot(episode_rewards, algorithm_name, env_name):
     plt.figure(figsize=(10, 5))
     plt.title(name)
     plt.plot(np.arange(len(episode_rewards)), episode_rewards)
-    plt.xlabel('Episode')
+    plt.xlabel('Episode Num')
     plt.ylabel('Episode Reward')
     if not os.path.exists(path):
         os.makedirs(path)
