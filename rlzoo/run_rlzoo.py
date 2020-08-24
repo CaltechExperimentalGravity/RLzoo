@@ -86,7 +86,7 @@ def dozoo(args):
 
     if args.test:
         # load trained model - this is so we can train on a headless machine an test locally
-        alg.learn(env=env, mode='test', render=True, **learn_params, plot_func=True)
+        alg.learn(env=env, mode='test', render=True, **learn_params)
 
     env.close()
 
@@ -96,8 +96,11 @@ if __name__ == '__main__':
     # parse some args here
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--fs', type=int, default=256,
-                    help='Sampling rate of the mock data')
+    parser.add_argument('--nsteps', type=int, default=1000,
+                    help='How many time steps per episode')
+
+    parser.add_argument('--nepisodes', type=int, default=100,
+                    help='How many episode')
 
     parser.add_argument('--opt', type=str, default='Nadam',
                     help='Which Optimizer to use for training the network')
