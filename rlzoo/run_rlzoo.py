@@ -80,8 +80,10 @@ def dozoo(args):
 
     display = pyvirtualdisplay.Display(visible=0, size=(1400, 900)).start()
     alg = eval(AlgName + '(**alg_params)')
-    
+
     if args.train:
+        learn_params['train_episodes'] = args.nepisodes
+        learn_params['max_steps']      = args.max_steps
         alg.learn(env=env, mode='train', render=False, **learn_params)
 
     if args.test:
@@ -96,7 +98,7 @@ if __name__ == '__main__':
     # parse some args here
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--nsteps', type=int, default=1000,
+    parser.add_argument('--max_steps', type=int, default=150,
                     help='How many time steps per episode')
 
     parser.add_argument('--nepisodes', type=int, default=100,
