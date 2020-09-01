@@ -733,12 +733,20 @@ all_env_list = {
 
     # Classic control
     'classic_control': [
-        'Acrobot-v1',
+	'Acrobot-v1',
         'CartPole-v1',
         'CartPole-v0',
         'MountainCar-v0',
         'MountainCarContinuous-v0',
         'Pendulum-v0'
+    ],
+
+    # Temperature control
+    'temp_ctrl': [
+        'TempControl-v0',
+        'VacCan-v0',
+        'VacCanC-v0',
+        'VacCan-parametric-v0'
     ],
 
     # Box2D
