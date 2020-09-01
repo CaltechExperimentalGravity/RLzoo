@@ -31,7 +31,8 @@ def dozoo(args):
 
     # EnvName = 'CartPole-v0'
     # EnvName = 'Pendulum-v0'
-    EnvName = TempControl-v0
+    
+    EnvName = 'TempControl-v0'
     EnvType = 'temp_ctrl'
 
     # EnvName = 'BipedalWalker-v2'
