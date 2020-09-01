@@ -33,7 +33,7 @@ def dozoo(args):
     # EnvName = 'Pendulum-v0'
     
     EnvName = 'TempControl-v0'
-    EnvType = 'classic_control'
+    EnvType = 'temp_ctrl'
 
     # EnvName = 'BipedalWalker-v2'
     # EnvType = 'box2d'
