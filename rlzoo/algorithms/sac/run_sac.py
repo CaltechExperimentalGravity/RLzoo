@@ -4,7 +4,7 @@ from rlzoo.common.value_networks import *
 import gym
 
 """ load environment """
-env = gym.make('Pendulum-v0').unwrapped
+env = gym.make('TempControl-v0').unwrapped
 # env = DummyVecEnv([lambda: env])  # The algorithms require a vectorized/wrapped environment to run
 action_shape = env.action_space.shape
 state_shape = env.observation_space.shape
