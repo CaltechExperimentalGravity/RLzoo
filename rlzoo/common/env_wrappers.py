@@ -45,7 +45,7 @@ def build_env(env_id, env_type, vectorized=False,
     Build env based on options
 
     :param env_id: (str) environment id
-    :param env_type: (str) atari, classic_control, box2d
+    :param env_type: (str) atari, classic_control, temp_ctrl, box2d
     :param vectorized: (bool) whether sampling parrallel
     :param seed: (int) random seed for env
     :param reward_shaping: (callable) callable function for reward shaping
