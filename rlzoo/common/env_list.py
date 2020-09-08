@@ -733,7 +733,8 @@ all_env_list = {
 
     # Classic control
     'classic_control': [
-	'Acrobot-v1',
+        'TempControl-v0',
+        'Acrobot-v1',
         'CartPole-v1',
         'CartPole-v0',
         'MountainCar-v0',
