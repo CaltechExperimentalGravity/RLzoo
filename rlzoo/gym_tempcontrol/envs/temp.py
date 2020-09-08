@@ -146,7 +146,7 @@ class TempEnv(gym.Env):
     def reset(self):
         #setting bounds for new starting temperature
         high = 25
-        low = 15
+        low = 20
         T_start = self.np_random.uniform(low=low, high=high)
         #self.state = [T_start, self.model(T_start,0)]
         self.state = [T_start, self.T_amb(0)]
