@@ -6,8 +6,8 @@ import gym_tempcontrol
 from time import time # just to have timestamps in the files
 
 #import optuna
-#import neptune
-#from neptunecontrib.monitoring.keras import NeptuneMonitor
+import neptune
+from neptunecontrib.monitoring.keras import NeptuneMonitor
 
 import argparse
 #import json
@@ -26,9 +26,6 @@ import pyvirtualdisplay
 
 def dozoo(args):
 
-    # EnvName = 'PongNoFrameskip-v4'
-    # EnvType = 'atari'
-
     # EnvName = 'CartPole-v0'
     # EnvName = 'Pendulum-v0'
     
@@ -36,20 +33,6 @@ def dozoo(args):
     EnvType = 'classic_control'
     # EnvType = 'temp_ctrl'
 
-    # EnvName = 'BipedalWalker-v2'
-    # EnvType = 'box2d'
-
-    # EnvName = 'Ant-v2'
-    # EnvType = 'mujoco'
-
-    # EnvName = 'FetchPush-v1'
-    # EnvType = 'robotics'
-
-    # EnvName = 'FishSwim-v0'
-    # EnvType = 'dm_control'
-
-    # EnvName = 'ReachTarget'
-    # EnvType = 'rlbench'
     # env = build_env(EnvName, EnvType, state_type='vision')
 
     AlgName = 'SAC'

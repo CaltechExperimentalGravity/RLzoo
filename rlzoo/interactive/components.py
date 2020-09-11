@@ -20,7 +20,7 @@ class EnvironmentSelector(widgets.VBox):
     def __init__(self):
         env_list = all_env_list
         # al = list(env_list.keys())
-        al = ['atari', 'classic_control', 'box2d', 'mujoco', 'robotics', 'dm_control', 'rlbench']
+        al = ['atari', 'classic_control', 'temp_ctrl', 'box2d', 'mujoco', 'robotics', 'dm_control', 'rlbench']
         description = 'Environment Selector'
         caption = widgets.HTML(value="<font size=4><B>" + description + "</B>")
 
