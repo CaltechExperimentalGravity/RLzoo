@@ -6,10 +6,10 @@ import gym_tempcontrol
 from time import time # just to have timestamps in the files
 
 #import optuna
-import neptune
+#import neptune
 #from neptunecontrib.monitoring.keras import NeptuneMonitor
-neptune.init(ellabg/RL)
-neptune.create_experiment(name='temp_ctrl')
+#neptune.init(ellabg/RL)
+#neptune.create_experiment(name='temp_ctrl')
 
 import argparse
 #import json
