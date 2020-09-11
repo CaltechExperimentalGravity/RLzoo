@@ -7,7 +7,9 @@ from time import time # just to have timestamps in the files
 
 #import optuna
 import neptune
-from neptunecontrib.monitoring.keras import NeptuneMonitor
+#from neptunecontrib.monitoring.keras import NeptuneMonitor
+neptune.init(ellabg/RL)
+neptune.create_experiment(name='temp_ctrl')
 
 import argparse
 #import json
