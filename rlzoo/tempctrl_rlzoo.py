@@ -8,7 +8,7 @@ from time import time # just to have timestamps in the files
 #import optuna
 import neptune
 #from neptunecontrib.monitoring.keras import NeptuneMonitor
-neptune.init(ellabg/sandbox, api_token="eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vdWkubmVwdHVuZS5haSIsImFwaV91cmwiOiJodHRwczovL3VpLm5lcHR1bmUuYWkiLCJhcGlfa2V5IjoiY2I1ODBhNzUtYzAzZC00MmMzLTgyOTktNTJkODY5YzY0MjljIn0=")
+neptune.init('ellabg/sandbox', api_token="eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vdWkubmVwdHVuZS5haSIsImFwaV91cmwiOiJodHRwczovL3VpLm5lcHR1bmUuYWkiLCJhcGlfa2V5IjoiY2I1ODBhNzUtYzAzZC00MmMzLTgyOTktNTJkODY5YzY0MjljIn0=")
 neptune.create_experiment(name='temp_ctrl')
 
 import argparse
