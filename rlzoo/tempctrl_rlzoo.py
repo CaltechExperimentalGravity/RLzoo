@@ -11,7 +11,9 @@ import neptune
 neptune.init('ellabg/sandbox', api_token="eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vdWkubmVwdHVuZS5haSIsImFwaV91cmwiOiJodHRwczovL3VpLm5lcHR1bmUuYWkiLCJhcGlfa2V5IjoiY2I1ODBhNzUtYzAzZC00MmMzLTgyOTktNTJkODY5YzY0MjljIn0=")
 neptune.create_experiment(name='temp_ctrl')
 
-neptune.log_metric('loss', 0.95**i)
+neptune.log_metric('loss',0.95)
+neptune.log_metric('test_auc', 0.92) # metrics, losses
+neptune.log_image('charts', roc_curve_fig) # images, charts
 
 import argparse
 #import json
