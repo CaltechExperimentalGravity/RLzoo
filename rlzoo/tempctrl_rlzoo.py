@@ -13,7 +13,6 @@ neptune.create_experiment(name='temp_ctrl')
 
 neptune.log_metric('loss',0.95)
 neptune.log_metric('test_auc', 0.92) # metrics, losses
-neptune.log_image('charts', roc_curve_fig) # images, charts
 
 import argparse
 #import json
