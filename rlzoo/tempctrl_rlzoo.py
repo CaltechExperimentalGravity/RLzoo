@@ -34,7 +34,7 @@ def dozoo(args):
     # EnvName = 'CartPole-v0'
     # EnvName = 'Pendulum-v0'
     
-    EnvName = 'TempControl-v0'
+    EnvName = 'VacCanC-v0'
     EnvType = 'classic_control'
     # EnvType = 'temp_ctrl'
 
