@@ -2,7 +2,6 @@ from rlzoo.common.env_wrappers import *
 from rlzoo.common.utils import *
 from rlzoo.algorithms import *
 from gym import wrappers
-import gym_tempcontrol
 from time import time # just to have timestamps in the files
 
 #import optuna
