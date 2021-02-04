@@ -751,6 +751,12 @@ all_env_list = {
         'VacCanC-v0',
         'VacCan-parametric-v0'
     ],
+    
+    # Test Mass Control
+    'TestMassControl': [
+        'TMassCon-v0'
+    ],
+    
 
     # Box2D
     'box2d': [
