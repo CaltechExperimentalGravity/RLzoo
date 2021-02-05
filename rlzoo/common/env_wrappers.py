@@ -14,7 +14,8 @@ import cv2
 import gym
 import numpy as np
 from gym import spaces
-from gym.wrappers import FlattenDictWrapper
+#from gym.wrappers import FlattenDictWrapper
+from gym.wrappers import flatten_observation #made to work with caltech version of gym
 
 from rlzoo.common.env_list import get_envlist
 
