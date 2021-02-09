@@ -68,8 +68,7 @@ def build_env(env_id, env_type, vectorized=False,
                 env.append(single_env)  # get env as a list of same single env
 
     else:
-        env = _make_env(env_id, env_type, seed,
-                        reward_shaping, stack, **kwargs)
+        env = _make_env(env_id, env_type, seed, reward_shaping, stack, **kwargs)
 
     return env
 
@@ -117,6 +116,11 @@ def _make_env(env_id, env_type, seed, reward_shaping, frame_stack, **kwargs):
         from rlzoo.common.build_rlbench_env import RLBenchEnv
         state_type = kwargs.get('state_type')
         env = RLBenchEnv(env_id) if state_type is None else RLBenchEnv(env_id, state_type)
+    elif env_type in ['TestMassControl']:
+        env = gym.make(env_id).unwrapped
+        max_episode_steps = kwargs.get('max_episode_steps')
+        if max_episode_steps is not None:
+            env = TimeLimit(env.unwrapped, max_episode_steps)
     else:
         raise NotImplementedError
 
