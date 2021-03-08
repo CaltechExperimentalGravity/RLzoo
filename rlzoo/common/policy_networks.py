@@ -275,8 +275,7 @@ class StochasticPolicyNetwork(Model):
         else:
             if np.shape(states)[1:] != self.state_shape:
                 raise ValueError(
-                    'Input state shape error. Shape should be {} but your shape is {}'.format((None,) + self.state_shape,
-                                                                                              np.shape(states)))
+                    'Input state shape error. Shape should be {} but your shape is {}'.format((None,) + self.state_shape, np.shape(states)))
             states = np.array(states, dtype=np.float32)
         params = super().__call__(states, *args, **kwargs)
         if isinstance(self._action_space, spaces.Box) and not self._state_conditioned:
