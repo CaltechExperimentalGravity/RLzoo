@@ -1,4 +1,5 @@
 from .ac.ac import AC
+from .ac_custom.ac_custom import AC_CUSTOM
 from .pg.pg import PG
 from .dqn.dqn import DQN
 from .a3c.a3c import A3C
