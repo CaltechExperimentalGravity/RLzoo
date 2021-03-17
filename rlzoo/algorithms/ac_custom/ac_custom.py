@@ -131,8 +131,8 @@ class AC_CUSTOM:
 
                     a = self.get_action(s)
                     s_new, r, done, info = env.step(a)
-                    ep_rs_sum += r
-
+                    #ep_rs_sum += r
+                    ep_rs_sum = r
                     try:
                         self.update(s, a, r, s_new)  # learn Policy : true_gradient = grad[logPi(s, a) * td_error]
                     except KeyboardInterrupt:  # if Ctrl+C at running actor.learn(), then save model, or exit if not at actor.learn()
@@ -171,7 +171,7 @@ class AC_CUSTOM:
                     s_new, r, done, info = env.step(a)
                     s_new = s_new
 
-                    ep_rs_sum += r
+                    ep_rs_sum = r
                     s = s_new
 
                     if done:
