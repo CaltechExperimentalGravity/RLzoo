@@ -49,6 +49,8 @@ import tensorlayer as tl
 from rlzoo.common.utils import *
 from rlzoo.common.value_networks import *
 from rlzoo.common.policy_networks import *
+from tqdm import tqdm
+from .tf_calc import *
 
 tl.logging.set_verbosity(tl.logging.DEBUG)
 
@@ -111,7 +113,7 @@ class AC_CUSTOM:
         :param test_episodes:  total number of episodes for testing
         :param max_steps:  maximum number of steps for one episode
         :param save_interval: time steps for saving the weights and plotting the results
-        :param mode: 'train' or 'test'
+        :param mode: 'train' or 'test' or 'tf' for transfer function
         :param render:  if true, visualize the environment
         :param plot_func: additional function for interactive module
         """
@@ -131,8 +133,8 @@ class AC_CUSTOM:
 
                     a = self.get_action(s)
                     s_new, r, done, info = env.step(a)
-                    #ep_rs_sum += r
-                    ep_rs_sum = r
+
+                    ep_rs_sum = env.integrator
                     try:
                         self.update(s, a, r, s_new)  # learn Policy : true_gradient = grad[logPi(s, a) * td_error]
                     except KeyboardInterrupt:  # if Ctrl+C at running actor.learn(), then save model, or exit if not at actor.learn()
@@ -168,10 +170,11 @@ class AC_CUSTOM:
                 for step in range(max_steps):
                     if render: env.render()
                     a = self.get_action_greedy(s)
+
                     s_new, r, done, info = env.step(a)
                     s_new = s_new
 
-                    ep_rs_sum = r
+                    ep_rs_sum = env.integrator
                     s = s_new
 
                     if done:
@@ -182,6 +185,68 @@ class AC_CUSTOM:
                     plot_func(reward_buffer)
                 print('Episode: {}/{}  | Episode Reward: {:.4f}  | Running Time: {:.4f}'.format(
                     i_episode, test_episodes, ep_rs_sum, time.time() - t0))
+
+        elif mode == 'tf':
+            self.load_ckpt(env_name=env.spec.id)
+            print('Taking TF...  | Algorithm: {}  | Environment: {}'.format(self.name, env.spec.id))
+
+
+            #TF Params
+            f_start=1 #Hz
+            f_stop=10 #Hz
+            f_step=1 #Hz
+            f_num_points=(f_stop-f_start)/f_step
+            
+            #sine params
+            amplitude = 1 #Newton meters
+            sin_start=0
+            sin_stop= 5 * np.pi
+            sin_step= 0.1
+            sin_num_points=(sin_stop-sin_start)/sin_step
+            
+            input_arr=np.array([])
+            output_arr=np.array([])
+            for f in tqdm(np.arange(f_start, f_stop, f_step)):
+                t = np.arange(sin_start, sin_stop, sin_step) # start, stop, step
+                y = amplitude * np.sin(2 * np.pi * f * t)
+                s = env.reset()
+
+                for excitation in y:
+                    if render: env.render()
+                    #a = self.get_action_greedy(s)
+                    a = np.add(np.array([excitation]), self.get_action_greedy(s))
+                    s_new, r, done, info = env.step(a, add_noise=False)
+                    
+                    input_arr=np.append(input_arr, excitation)
+                    output_arr=np.append(output_arr, s_new)
+                    s = s_new
+                    
+            print(input_arr)
+            print(output_arr)
+            
+            '''
+            excitation_data_arr=np.array([])
+            for f in tqdm(np.arange(f_start, f_stop, f_step)):
+                t = np.arange(sin_start, sin_stop, sin_step) # start, stop, step
+                y = amplitude * np.sin(2 * np.pi * f * t)
+                
+                s = env.reset()
+                state_arr=np.array([])
+
+                for excitation in y:
+                    if render: env.render()
+                    #a = self.get_action_greedy(s)
+                    a = np.array([excitation])
+                    s_new, r, done, info = env.step(a, add_noise=False)
+                    np.append(state_arr, s_new)
+                    s = s_new
+
+                np.append(excitation_data_arr,state_arr)
+            '''
+            #calculate transfer function from data
+            #t_sent=np.arange(0, sin_stop*f_num_points, sin_step)
+            tf_data=take_tf(input_arr, output_arr, sin_step)
+            print(tf_data)
 
         elif mode is not 'test':
             print('unknow mode type')
