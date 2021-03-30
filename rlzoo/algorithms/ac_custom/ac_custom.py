@@ -189,34 +189,25 @@ class AC_CUSTOM:
         elif mode == 'tf':
             self.load_ckpt(env_name=env.spec.id)
             print('Taking TF...  | Algorithm: {}  | Environment: {}'.format(self.name, env.spec.id))
-
-            #TF Params
-            f_num_points=1000
             
+            #TF Params
             f_start=0 #Hz
             f_stop=10 #Hz
-            f_step=(f_stop-f_start)/f_num_points
+            samp_fq=30 #Hz make sure it is not less than twice the  max frequency
+            time_length=30 #s this is not super important just make sure it isnt too short
+            num_points=time_length*samp_fq
             
-            samples_per_period=16 #samples per peiod at maximum f. cant be lower than 2
-            time_length=(samples_per_period)*(f_num_points)/(f_stop) #time refrence for the frequency
-            samp_f= f_num_points/time_length#time between data
-            
-            calc_max_f=(samp_f*2)
-            print('max f ', str(calc_max_f))
-            
-            print('time length:', str(time_length))
-            print('samp_f:', str(samp_f))
-                        
             #sine params
             amplitude = 1 #Newton meters
-            t=np.linspace(0, time_length, num=f_num_points)
-            f=np.linspace(f_start, f_stop, num=f_num_points)
+            t=np.linspace(0, time_length, num=num_points)
+            f=np.linspace(f_start, f_stop, num=num_points)
             y=np.array([])
             
             for i in range(len(t)):
                 excitation=amplitude * np.sin(2 * np.pi * f[i] * t[i])
                 y=np.append(y, excitation)
-                
+               
+               
             input_arr=np.array([])
             output_arr=np.array([])
                 
@@ -229,8 +220,11 @@ class AC_CUSTOM:
                 input_arr=np.append(input_arr, excitation)
                 output_arr=np.append(output_arr, s_new)
                 s = s_new
+                
+                
+            
                  
-            tf=take_tf(input_arr, output_arr, samp_f)
+            tf=take_tf(input_arr, output_arr, samp_fq)
             
             tf_data=tf[1]
             tf_phase=tf[1].imag
@@ -247,6 +241,8 @@ class AC_CUSTOM:
             fig.suptitle('Transfer Function')
             axs[0].plot(f_data, tf_data)
             axs[0].set_ylabel('Amplitude')
+            axs[0].set_xlim([f_start, f_stop])
+            axs[0].set_xscale('log')
             axs[1].plot(f_data, tf_phase)
             axs[1].set_ylabel('Phase')
             axs[1].set_xlabel('Frequency (Hz)')
