@@ -195,54 +195,57 @@ class AC_CUSTOM:
             f_stop=10 #Hz
             samp_fq=30 #Hz make sure it is not less than twice the  max frequency
             time_length=30 #s this is not super important just make sure it isnt too short
-            num_points=time_length*samp_fq
+            num_averages=15 #the number of averages that will be taken
+            num_points=time_length*samp_fq #the number of points in the time and frequency space
             
             #sine params
             amplitude = 1 #Newton meters
-            t=np.linspace(0, time_length, num=num_points)
-            f=np.linspace(f_start, f_stop, num=num_points)
-            y=np.array([])
+            t=np.linspace(0, time_length, num=num_points) #creates a list of time for the use in sine
+            f=np.linspace(f_start, f_stop, num=num_points) #creates a list of frequencies to sweep over for the use in sine
+            y=np.array([]) #empty list for the input excitation to populate
             
-            for i in range(len(t)):
+            for i in range(len(t)): #for loop to populate y with rxcitatation values
                 excitation=amplitude * np.sin(2 * np.pi * f[i] * t[i])
                 y=np.append(y, excitation)
-               
-               
-            input_arr=np.array([])
-            output_arr=np.array([])
                 
-            s = env.reset()
-            for excitation in tqdm(y):
-                if render: env.render()
-                a = np.add(np.array([excitation]), self.get_action_greedy(s))
-                s_new, r, done, info = env.step(a, add_noise=False)
+            output_all=[]#list of response arrays that will be used for averaging
+            
+            for j in tqdm(range(num_averages)): #looping over the number of avarages
+                input_arr = np.array([]) #empty array to populate with input values
+                output_arr = np.array([]) #empty array to populate with the output values
                 
-                input_arr=np.append(input_arr, excitation)
-                output_arr=np.append(output_arr, s_new)
-                s = s_new
+                s = env.reset() #resets the env after each average
+                for excitation in tqdm(y): #loops over the the frequency space
+                    if render: env.render() #renders the environment if added to input arguments
+                    a = np.add(np.array([excitation]), self.get_action_greedy(s)) #adds the excitation value with the continuation value from a normal test
+                    s_new, r, done, info = env.step(a, add_noise=False) #gets new step info
+                    input_arr = np.append(input_arr, excitation) #adds value that was used as input
+                    output_arr = np.append(output_arr, s_new) #adds output value
+                    s = s_new
                 
+                output_all.append(output_arr) #adds the array of outputs to the list of all outputs
+
+            output_all=np.array(output_all) #changes output_all to array from list
+            
+            tf_all=[]
+            for arr in output_all: #takes tfs of the individual data runs
+                tf=take_tf(input_arr, arr, samp_fq) #takes tf from tf function
+                tf_all.append(tf) #add the results from the tf function to the tf_all list
                 
+            tf_all = np.array(tf_all) #make the tf_all a np array from a list
+            tf_all = np.average(tf_all, axis=0) #averages the results from the tf function
             
-                 
-            tf=take_tf(input_arr, output_arr, samp_fq)
+            tf_data=tf_all[1] #gets the y value for the tf from the output of the tf function
+            tf_phase=tf_all[1].imag #takes the imagionary part of the y for the phase
+            f_data=tf_all[0] #gets the frequency data from the output
             
-            tf_data=tf[1]
-            tf_phase=tf[1].imag
-            f_data=tf[0]
-            print(len(tf_data))
-            
-            #print(f_data)
-            
-            #print(tf[0])
-            
-            import matplotlib.pyplot as plt
+            import matplotlib.pyplot as plt #import matplot lib for use in tf plot
             
             fig, axs = plt.subplots(2,sharex=True)
             fig.suptitle('Transfer Function')
             axs[0].plot(f_data, tf_data)
             axs[0].set_ylabel('Amplitude')
             axs[0].set_xlim([f_start, f_stop])
-            axs[0].set_xscale('log')
             axs[1].plot(f_data, tf_phase)
             axs[1].set_ylabel('Phase')
             axs[1].set_xlabel('Frequency (Hz)')
@@ -250,54 +253,3 @@ class AC_CUSTOM:
 
         elif mode is not 'test':
             print('unknow mode type')
-
-            '''
-            #sine params
-            amplitude = 1 #Newton meters
-            sin_start=0
-            sin_stop= 5 * np.pi
-            sin_step= 0.1
-            sin_num_points=(sin_stop-sin_start)/sin_step
-            '''
-
-            '''
-            input_arr=np.array([])
-            output_arr=np.array([])
-            for f in tqdm(np.arange(f_start, f_stop, f_step)):
-                t = np.arange(sin_start, sin_stop, sin_step) # start, stop, step
-                y = amplitude * np.sin(2 * np.pi * f * t)
-                s = env.reset()
-
-                for excitation in y:
-                    if render: env.render()
-                    #a = self.get_action_greedy(s)
-                    a = np.add(np.array([excitation]), self.get_action_greedy(s))
-                    s_new, r, done, info = env.step(a, add_noise=False)
-                    
-                    input_arr=np.append(input_arr, excitation)
-                    output_arr=np.append(output_arr, s_new)
-                    s = s_new
-                    
-            print(input_arr)
-            print(output_arr)
-            '''
-            
-            '''
-            excitation_data_arr=np.array([])
-            for f in tqdm(np.arange(f_start, f_stop, f_step)):
-                t = np.arange(sin_start, sin_stop, sin_step) # start, stop, step
-                y = amplitude * np.sin(2 * np.pi * f * t)
-                
-                s = env.reset()
-                state_arr=np.array([])
-
-                for excitation in y:
-                    if render: env.render()
-                    #a = self.get_action_greedy(s)
-                    a = np.array([excitation])
-                    s_new, r, done, info = env.step(a, add_noise=False)
-                    np.append(state_arr, s_new)
-                    s = s_new
-
-                np.append(excitation_data_arr,state_arr)
-            '''
