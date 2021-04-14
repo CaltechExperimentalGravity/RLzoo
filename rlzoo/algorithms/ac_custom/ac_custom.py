@@ -195,7 +195,7 @@ class AC_CUSTOM:
             f_stop=10 #Hz
             samp_fq=30 #Hz make sure it is not less than twice the  max frequency
             time_length=30 #s this is not super important just make sure it isnt too short
-            num_averages=15 #the number of averages that will be taken
+            num_averages=40 #the number of averages that will be taken
             num_points=time_length*samp_fq #the number of points in the time and frequency space
             
             #sine params
@@ -225,30 +225,116 @@ class AC_CUSTOM:
                 
                 output_all.append(output_arr) #adds the array of outputs to the list of all outputs
 
-            output_all=np.array(output_all) #changes output_all to array from list
+            #output_all=np.array(output_all) #changes output_all to array from list
             
             tf_all=[]
             for arr in output_all: #takes tfs of the individual data runs
                 tf=take_tf(input_arr, arr, samp_fq) #takes tf from tf function
+                #tf=tfe(input_arr, arr, samp_fq) #takes tf from tf function
                 tf_all.append(tf) #add the results from the tf function to the tf_all list
                 
             tf_all = np.array(tf_all) #make the tf_all a np array from a list
             tf_all = np.average(tf_all, axis=0) #averages the results from the tf function
             
-            tf_data=tf_all[1] #gets the y value for the tf from the output of the tf function
-            tf_phase=tf_all[1].imag #takes the imagionary part of the y for the phase
+            tf_data=np.absolute(tf_all[1])#gets the y value for the tf from the output of the tf function
+            tf_phase=np.angle(tf_all[1], deg=True) #takes the imagionary part of the y for the phase
+            print(tf_data)
+            print(tf_phase)
             f_data=tf_all[0] #gets the frequency data from the output
             
             import matplotlib.pyplot as plt #import matplot lib for use in tf plot
             
+            #plots the transfer function
             fig, axs = plt.subplots(2,sharex=True)
             fig.suptitle('Transfer Function')
             axs[0].plot(f_data, tf_data)
             axs[0].set_ylabel('Amplitude')
             axs[0].set_xlim([f_start, f_stop])
+            #axs[0].set_xscale('log')
+            axs[0].set_yscale('log')
             axs[1].plot(f_data, tf_phase)
             axs[1].set_ylabel('Phase')
             axs[1].set_xlabel('Frequency (Hz)')
+            plt.savefig('TransferFunction.pdf')
+            plt.show()
+            
+        elif mode == 'tf2':
+            self.load_ckpt(env_name=env.spec.id)
+            print('Taking TF...  | Algorithm: {}  | Environment: {}'.format(self.name, env.spec.id))
+            
+            #TF Params
+            f_start=0 #Hz
+            f_stop=10 #Hz
+            num_samples=20
+            samp_fq=30 #Hz make sure it is not less than twice the  max frequency
+            time_length_per_f=10 #s this is not super important just make sure it isnt too short
+            num_averages=10 #the number of averages that will be taken
+            num_points_per_f=time_length_per_f*samp_fq #the number of points in the time and frequency space
+            
+            f=np.linspace(f_start, f_stop, num=num_samples)
+            
+            for fq in f:
+            
+                #sine params
+                amplitude = 1 #Newton meters
+                t=np.linspace(0, time_length_per_f, num=num_points_per_f) #creates a list of time for the use in sine
+                y=np.array([]) #empty list for the input excitation to populate
+            
+                for i in range(len(t)): #for loop to populate y with rxcitatation values
+                    excitation=amplitude * np.sin(2 * np.pi * fq * t[i])
+                    y=np.append(y, excitation)
+                
+                output_all=[]#list of response arrays that will be used for averaging
+            
+                for j in tqdm(range(num_averages)): #looping over the number of avarages
+                    input_arr = np.array([]) #empty array to populate with input values
+                    output_arr = np.array([]) #empty array to populate with the output values
+                
+                    s = env.reset() #resets the env after each average
+                    for excitation in tqdm(y): #loops over the the frequency space
+                        if render: env.render() #renders the environment if added to input arguments
+                        a = np.add(np.array([excitation]), self.get_action_greedy(s)) #adds the excitation value with the continuation value from a normal test
+                        s_new, r, done, info = env.step(a, add_noise=False) #gets new step info
+                        input_arr = np.append(input_arr, excitation) #adds value that was used as input
+                        output_arr = np.append(output_arr, s_new) #adds output value
+                        s = s_new
+                
+                    output_all.append(output_arr) #adds the array of outputs to the list of all outputs
+
+                #output_all=np.array(output_all) #changes output_all to array from list
+            
+                tf_all=[]
+                for arr in output_all: #takes tfs of the individual data runs
+                    tf=take_tf(input_arr, arr, samp_fq, fq) #takes tf from tf function
+                    tf_all.append(tf) #add the results from the tf function to the tf_all list
+                
+                tf_all = np.array(tf_all) #make the tf_all a np array from a list
+                tf_all = np.average(tf_all, axis=0) #averages the results from the tf function
+            
+                tf_data=np.absolute(tf_all[1])#gets the y value for the tf from the output of the tf function
+                tf_phase=np.angle(tf_all[1], deg=True) #takes the imagionary part of the y for the phase
+                print(tf_data)
+                print(tf_phase)
+                f_data=tf_all[0] #gets the frequency data from the output
+                
+                
+                
+                
+            
+            import matplotlib.pyplot as plt #import matplot lib for use in tf plot
+            
+            #plots the transfer function
+            fig, axs = plt.subplots(2,sharex=True)
+            fig.suptitle('Transfer Function')
+            axs[0].plot(f_data, tf_data)
+            axs[0].set_ylabel('Amplitude')
+            axs[0].set_xlim([f_start, f_stop])
+            #axs[0].set_xscale('log')
+            axs[0].set_yscale('log')
+            axs[1].plot(f_data, tf_phase)
+            axs[1].set_ylabel('Phase')
+            axs[1].set_xlabel('Frequency (Hz)')
+            plt.savefig('TransferFunction.pdf')
             plt.show()
 
         elif mode is not 'test':
