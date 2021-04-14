@@ -18,10 +18,14 @@ def take_tf(input, output, samp_f, f=-1):
     psd_for=psd[1]
     for i in range(len(psd[0])):
         tf = np.append(tf, (csd_for[i])/(psd_for[i]))
+    return [f_num, tf]
+        
+    ''' For added functionality later
     if f<0:
         return [f_num, tf]
     else:
         return [
+    '''
     
 from matplotlib.mlab import psd, csd
 def tfe(input, output, samp_f):
